@@ -6,6 +6,54 @@ Cliente web (SPA) de **ComicVault**: biblioteca personal de cómics indexados de
 
 ---
 
+## Cómo correrlo (quickstart)
+
+Necesitás **dos terminales**: una para el backend (puerto 3000) y otra para este frontend (puerto 5173). El frontend no funciona sin el backend (el login, el catálogo y las páginas salen de `/api`).
+
+### Opción A: desarrollo (recomendado)
+
+**Terminal 1 — backend** (desde la carpeta `backend/` del proyecto):
+
+```bash
+corepack enable
+pnpm install
+pnpm start:dev
+# queda escuchando en http://localhost:3000
+```
+
+**Terminal 2 — este frontend** (desde esta carpeta `web/`):
+
+```bash
+corepack enable
+pnpm install
+cp .env.example .env   # solo la primera vez (se deja VITE_API_URL vacío)
+pnpm dev
+# abre http://localhost:5173 en el navegador
+```
+
+**En el navegador:**
+
+1. Entrá a `http://localhost:5173`.
+2. Hacé clic en **Iniciar sesión con Google** (te redirige al backend y vuelve con la sesión en cookie).
+3. Hacé clic en **Sync Drive** para indexar tus cómics.
+4. Hacé clic en una portada para leer (`Leer` / `Continuar pág. N`).
+
+> Si ves el hero de login en bucle, el backend no está corriendo o la cookie fue bloqueada: verificá que `http://localhost:3000/api/auth/me` responda.
+
+### Opción B: producción local (build + Docker)
+
+```bash
+pnpm build            # genera dist/ (antes corre tsc)
+pnpm preview          # sirve dist/ en http://localhost:5173 (requiere backend en :3000)
+
+# O con Docker (sirve el build con nginx en el puerto 80):
+docker build -t comicvault-web .
+docker run -p 8080:80 comicvault-web
+# abrir http://localhost:8080 (el /api se proxea a http://backend:3000: requiere compose con ese host)
+```
+
+---
+
 ## 1. Stack técnico
 
 | Capa | Tecnología | Versión |
